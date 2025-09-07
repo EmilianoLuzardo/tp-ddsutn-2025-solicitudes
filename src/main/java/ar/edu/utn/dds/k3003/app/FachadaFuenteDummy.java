@@ -6,12 +6,14 @@ import ar.edu.utn.dds.k3003.facades.dtos.CategoriaHechoEnum;
 import ar.edu.utn.dds.k3003.facades.dtos.ColeccionDTO;
 import ar.edu.utn.dds.k3003.facades.dtos.HechoDTO;
 import ar.edu.utn.dds.k3003.facades.dtos.PdIDTO;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@Profile("test")
 @Service
 public class FachadaFuenteDummy implements FachadaFuente {
     @Override
