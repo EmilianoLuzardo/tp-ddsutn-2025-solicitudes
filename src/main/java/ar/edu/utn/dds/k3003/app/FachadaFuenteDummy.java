@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-@Profile("test")
 @Service
 public class FachadaFuenteDummy implements FachadaFuente {
     @Override
