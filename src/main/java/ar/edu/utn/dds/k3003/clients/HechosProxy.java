@@ -3,6 +3,8 @@ package ar.edu.utn.dds.k3003.clients;
 
 import ar.edu.utn.dds.k3003.facades.dtos.HechoDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.javalin.http.HttpStatus;
 
 import java.io.IOException;
@@ -22,8 +24,10 @@ public class HechosProxy{
     public HechosProxy(ObjectMapper objectMapper) {
 
         var env = System.getenv();
-        this.endpoint = env.getOrDefault("URL_HECHOS", "https://tp-dds-2025-fuente-grupo2.onrender.com/");
+        this.endpoint = env.getOrDefault("URL_HECHOS", "https://tp-dds-2025-fuente-grupo2-2-fuentes-2.onrender.com");
 
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
         var retrofit =
                 new Retrofit.Builder()
                         .baseUrl(this.endpoint)

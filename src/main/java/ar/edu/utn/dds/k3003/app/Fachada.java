@@ -52,7 +52,7 @@ public class Fachada {
 
     @Transactional
     public SolicitudDTO agregar(SolicitudDTO solicitudDTO) {
-        //validarHechoAsociado(solicitudDTO.hechoId());
+        validarHechoAsociado(solicitudDTO.hechoId());
         SolicitudDTO revisada = revisarDescripcionConAntiSpam(solicitudDTO);
         Solicitud nueva = mapearADominio(revisada);
         nueva.setFechaCreacion(LocalDateTime.now());
@@ -67,7 +67,6 @@ public class Fachada {
         solicitud.setDescripcion(descripcion);
         solicitud.setFechaUltimaModificacion(LocalDateTime.now());
         solicitud = solicitudRepository.save(solicitud);
-        //solicitud = solicitudRepository.save(solicitud);
         return mapearADTO(solicitud);
     }
 
