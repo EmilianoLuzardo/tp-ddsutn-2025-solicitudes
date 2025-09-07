@@ -17,6 +17,7 @@ import java.util.*;
 public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaSolicitudes {
 
     private FachadaFuente fachadaFuente;
+    private FachadaFuente hechosProxy;
     private final SolicitudRepository solicitudRepository;
 
     protected Fachada() {
@@ -25,9 +26,9 @@ public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaSolicitudes 
 
     @Autowired
     public Fachada(
-            FachadaFuente fachadaFuente,
+            FachadaFuente hechosProxy,
             SolicitudRepository solicitudRepository) {
-        this.fachadaFuente = fachadaFuente;
+        this.fachadaFuente = hechosProxy;
         this.solicitudRepository = solicitudRepository;
     }
 

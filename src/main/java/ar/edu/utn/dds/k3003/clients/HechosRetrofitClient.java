@@ -7,6 +7,6 @@ import retrofit2.http.Path;
 
 public interface HechosRetrofitClient {
 
-    @GET("hecho/{id}")
+    @GET("hechos/{id}")
     Call<HechoDTO> get(@Path("id") String id);
 }

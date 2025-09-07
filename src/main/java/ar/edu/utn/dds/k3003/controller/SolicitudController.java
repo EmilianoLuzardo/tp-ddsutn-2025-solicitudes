@@ -2,12 +2,15 @@ package ar.edu.utn.dds.k3003.controller;
 
 
 import ar.edu.utn.dds.k3003.app.Fachada;
+import ar.edu.utn.dds.k3003.facades.dtos.EstadoSolicitudBorradoEnum;
 import ar.edu.utn.dds.k3003.facades.dtos.SolicitudDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/solicitudes")
@@ -30,13 +33,16 @@ public class SolicitudController {
     }
 
     @PostMapping
-    public ResponseEntity<SolicitudDTO> crearSolicitud(@RequestBody SolicitudDTO solicitudDTO) {
+    public ResponseEntity<?> crearSolicitud(@RequestBody SolicitudDTO solicitudDTO) {
         try {
             SolicitudDTO solicitudCreada = fachadaSolicitud.agregar(solicitudDTO);
             return ResponseEntity.ok(solicitudCreada);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
+            Map<String, String> error = new HashMap<>();
+            error.put("mensaje", "No se pudo crear la solicitud");
+            error.put("detalle", e.getMessage());
+            return ResponseEntity.status(500).body(error);
         }
     }
 

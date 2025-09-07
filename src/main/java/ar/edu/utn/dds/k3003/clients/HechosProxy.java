@@ -13,28 +13,30 @@ import java.io.IOException;
 import java.util.*;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
-//import retrofit2.Response;
-//import retrofit2.Retrofit;
-//import retrofit2.converter.jackson.JacksonConverterFactory;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 @Service
 public class HechosProxy implements FachadaFuente {
 
-    //private final String endpoint;
-    //private final HechosRetrofitClient service;
 
-    //public HechosProxy(ObjectMapper objectMapper) {
+    private final String endpoint;
+    private final HechosRetrofitClient service;
 
-    //    var env = System.getenv();
-    //    this.endpoint = env.getOrDefault("URL_HECHOS", "https://two025-tp-entrega-2-mijhwang.onrender.com/api/");
+    public HechosProxy(ObjectMapper objectMapper) {
 
-    //    var retrofit =
-    //            new Retrofit.Builder()
-    //                    .baseUrl(this.endpoint)
-    //                    .addConverterFactory(JacksonConverterFactory.create(objectMapper))
-    //                    .build();
+        var env = System.getenv();
+        this.endpoint = env.getOrDefault("URL_HECHOS", "https://tp-dds-2025-fuente-grupo2.onrender.com/");
 
-    //    this.service = retrofit.create(HechosRetrofitClient.class);
-    //}
+        var retrofit =
+                new Retrofit.Builder()
+                        .baseUrl(this.endpoint)
+                        .addConverterFactory(JacksonConverterFactory.create(objectMapper))
+                        .build();
+
+        this.service = retrofit.create(HechosRetrofitClient.class);
+    }
+
 
 
     @Override
@@ -54,19 +56,19 @@ public class HechosProxy implements FachadaFuente {
 
     @Override
     public HechoDTO buscarHechoXId(String s) throws NoSuchElementException {
-        // Response<HechoDTO> execute = null;
-        // try {
-        //     execute = service.get(s).execute();
-        // } catch (IOException e) {
-        //     throw new RuntimeException(e);
-        // }
-//
-        // if (execute.isSuccessful()) {
-        //     return execute.body();
-        // }
-        // if (execute.code() == HttpStatus.NOT_FOUND.getCode()) {
-        //     throw new NoSuchElementException("no se encontro el hecho " + s);
-        // }
+         Response<HechoDTO> execute = null;
+         try {
+             execute = service.get(s).execute();
+         } catch (IOException e) {
+             throw new RuntimeException(e);
+         }
+
+         if (execute.isSuccessful()) {
+             return execute.body();
+         }
+         if (execute.code() == HttpStatus.NOT_FOUND.getCode()) {
+             throw new NoSuchElementException("no se encontro el hecho " + s);
+         }
         throw new RuntimeException("Error conectandose con el componente hechos");
     }
 
