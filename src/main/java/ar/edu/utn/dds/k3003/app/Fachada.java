@@ -69,9 +69,8 @@ public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaSolicitudes 
 
     @Override
     public boolean estaActivo(String unHechoId) {
-        return this.solicitudRepository.findAll().stream()
-                .filter( x -> x.getHechoId().equals(unHechoId))
-                .anyMatch(x -> x.getEstado() != EstadoSolicitudBorradoEnum.ACEPTADA);
+        return !this.solicitudRepository.findByHechoId(unHechoId).stream()
+                .anyMatch(x -> x.getEstado() == EstadoSolicitudBorradoEnum.ACEPTADA);
     }
 
     @Override
