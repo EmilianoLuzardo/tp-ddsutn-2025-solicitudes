@@ -1,41 +1,58 @@
 package ar.edu.utn.dds.k3003.app;
 
+import ar.edu.utn.dds.k3003.clients.HechosProxy;
+
 import ar.edu.utn.dds.k3003.facades.FachadaFuente;
 import ar.edu.utn.dds.k3003.facades.dtos.EstadoSolicitudBorradoEnum;
+
 import ar.edu.utn.dds.k3003.facades.dtos.HechoDTO;
 import ar.edu.utn.dds.k3003.facades.dtos.SolicitudDTO;
 import ar.edu.utn.dds.k3003.model.Solicitud;
-import ar.edu.utn.dds.k3003.repository.InMemoryColeccionRepo;
-import ar.edu.utn.dds.k3003.repository.SolicitudRepository;
+
+import ar.edu.utn.dds.k3003.repository.JpaSolicitudRepository;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
-public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaSolicitudes {
-
-    private FachadaFuente fachadaFuente;
-    private FachadaFuente hechosProxy;
-    private final SolicitudRepository solicitudRepository;
-
-    protected Fachada() {
-        this.solicitudRepository = new InMemoryColeccionRepo();
-    }
+@Transactional
+public class Fachada {
+    private HechosProxy hechosProxy;
+    private JpaSolicitudRepository solicitudRepository;
 
     @Autowired
-    public Fachada(
-            FachadaFuente hechosProxy,
-            SolicitudRepository solicitudRepository) {
-        this.fachadaFuente = hechosProxy;
+    public Fachada(JpaSolicitudRepository solicitudRepository)
+    {
         this.solicitudRepository = solicitudRepository;
+        this.hechosProxy = new HechosProxy(new ObjectMapper());
     }
 
+    //Para que los tests puedan usar constructor vacío y no se cacheen entre sí
+    private Fachada() {
+        ConfigurableApplicationContext ctx =
+                new SpringApplicationBuilder(ar.edu.utn.dds.k3003.Application.class)
+                        .properties(
+                                "spring.main.web-application-type=none",
+                                "spring.jpa.hibernate.ddl-auto=create-drop",
+                                // pedido de tests
+                                "spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
+                        )
+                        .profiles("test")
+                        .run();
+        this.solicitudRepository = ctx.getBean(JpaSolicitudRepository.class);
+        this.hechosProxy = new HechosProxy(new ObjectMapper());
+    }
 
-    @Override
+    @Transactional
     public SolicitudDTO agregar(SolicitudDTO solicitudDTO) {
-        validarHechoAsociado(solicitudDTO.hechoId());
+        //validarHechoAsociado(solicitudDTO.hechoId());
         SolicitudDTO revisada = revisarDescripcionConAntiSpam(solicitudDTO);
         Solicitud nueva = mapearADominio(revisada);
         nueva.setFechaCreacion(LocalDateTime.now());
@@ -43,46 +60,50 @@ public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaSolicitudes 
         return mapearADTO(persistida);
     }
 
-    @Override
+
     public SolicitudDTO modificar(String solicitudId, EstadoSolicitudBorradoEnum estado, String descripcion) {
         Solicitud solicitud = obtenerSolicitud(solicitudId);
         solicitud.setEstado(estado);
         solicitud.setDescripcion(descripcion);
         solicitud.setFechaUltimaModificacion(LocalDateTime.now());
         solicitud = solicitudRepository.save(solicitud);
+        //solicitud = solicitudRepository.save(solicitud);
         return mapearADTO(solicitud);
     }
 
-    @Override
+
     public List<SolicitudDTO> buscarSolicitudXHecho(String hechoId) {
         return solicitudRepository.findByHechoId(hechoId).stream()
                 .map(this::mapearADTO)
                 .toList();
     }
 
-    @Override
+
     public SolicitudDTO buscarSolicitudXId(String solicitudId) {
-        Solicitud solicitud = this.solicitudRepository
+        Solicitud solicitud = solicitudRepository
                 .findById(Long.valueOf(solicitudId))
                 .orElseThrow(() -> new NoSuchElementException("No se encontró ninguna solicitud con id: " + solicitudId));
         return mapearADTO(solicitud);
     }
 
-    @Override
+
     public boolean estaActivo(String unHechoId) {
         return !this.solicitudRepository.findByHechoId(unHechoId).stream()
                 .anyMatch(x -> x.getEstado() == EstadoSolicitudBorradoEnum.ACEPTADA);
     }
 
-    @Override
-    public void setFachadaFuente(FachadaFuente fuente) {
-        this.fachadaFuente = fuente;
-    }
+
+
 
     private void validarHechoAsociado(String hechoId){
-        HechoDTO hecho = this.fachadaFuente.buscarHechoXId(hechoId);
+        HechoDTO hecho = this.hechosProxy.buscarHechoXId(hechoId);
         if(hecho == null)
             throw new IllegalArgumentException("El hecho no existe");
+    }
+
+    public String borrarTodo() {
+        solicitudRepository.deleteAllInBatch();
+        return "borradas todos las solicitudes";
     }
 
     private SolicitudDTO revisarDescripcionConAntiSpam(SolicitudDTO solicitud) {

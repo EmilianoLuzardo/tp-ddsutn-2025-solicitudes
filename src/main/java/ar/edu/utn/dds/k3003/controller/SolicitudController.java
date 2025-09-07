@@ -27,6 +27,11 @@ public class SolicitudController {
         return ResponseEntity.ok(fachadaSolicitud.buscarSolicitudXHecho(hechoId));
     }
 
+    @DeleteMapping("/todo")
+    public ResponseEntity<String> borrarTodo() {
+        return ResponseEntity.ok(fachadaSolicitud.borrarTodo());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<SolicitudDTO> getSolicitudXId (@PathVariable("id") String id){
         return ResponseEntity.ok(fachadaSolicitud.buscarSolicitudXId(id));
