@@ -29,6 +29,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+/*
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGenericException(Exception e) {
         Map<String, String> response = new HashMap<>();
@@ -36,4 +37,5 @@ public class GlobalExceptionHandler {
         response.put("message", "An unexpected error occurred");
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+*/
 }

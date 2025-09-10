@@ -16,9 +16,11 @@ public class Solicitud {
     private String descripcion;
     @Enumerated(EnumType.ORDINAL)
     private EstadoSolicitudBorradoEnum estado;
-    private final String hechoId;
+    private String hechoId;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaUltimaModificacion;
+
+    public Solicitud() { }
 
     public Solicitud(
             Long id,
