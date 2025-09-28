@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -68,6 +69,15 @@ public class Fachada {
         solicitud.setFechaUltimaModificacion(LocalDateTime.now());
         solicitud = solicitudRepository.save(solicitud);
         return mapearADTO(solicitud);
+    }
+
+
+    public Map<String, Boolean> verificarSolicitudesPorHechos(List<String> hechosIds) {
+        return hechosIds.stream()
+                .collect(Collectors.toMap(
+                        id -> id,
+                        id -> !solicitudRepository.findByHechoId(id).isEmpty()
+                ));
     }
 
 

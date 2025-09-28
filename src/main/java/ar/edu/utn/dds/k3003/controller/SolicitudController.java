@@ -56,4 +56,11 @@ public class SolicitudController {
         SolicitudDTO actualizada = fachadaSolicitud.modificar(dto.id(), dto.estado(), dto.descripcion());
         return ResponseEntity.ok(actualizada);
     }
+
+    @PostMapping("/verificar")
+    public ResponseEntity<Map<String, Boolean>> verificarSolicitudes(@RequestBody List<String> hechosIds) {
+        Map<String, Boolean> resultado = fachadaSolicitud.verificarSolicitudesPorHechos(hechosIds);
+        return ResponseEntity.ok(resultado);
+    }
+
 }
