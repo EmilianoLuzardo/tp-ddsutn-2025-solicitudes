@@ -4,6 +4,8 @@ package ar.edu.utn.dds.k3003.controller;
 import ar.edu.utn.dds.k3003.app.Fachada;
 import ar.edu.utn.dds.k3003.facades.dtos.EstadoSolicitudBorradoEnum;
 import ar.edu.utn.dds.k3003.facades.dtos.SolicitudDTO;
+import ar.edu.utn.dds.k3003.model.HechoDTO;
+import ar.edu.utn.dds.k3003.model.HechoVerificadoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,8 +60,8 @@ public class SolicitudController {
     }
 
     @PostMapping("/verificar")
-    public ResponseEntity<Map<String, Boolean>> verificarSolicitudes(@RequestBody List<String> hechosIds) {
-        Map<String, Boolean> resultado = fachadaSolicitud.verificarSolicitudesPorHechos(hechosIds);
+    public ResponseEntity<List<HechoVerificadoDTO>> verificarSolicitudes(@RequestBody List<HechoDTO> hechos) {
+        List<HechoVerificadoDTO> resultado = fachadaSolicitud.verificarSolicitudesPorHechos(hechos);
         return ResponseEntity.ok(resultado);
     }
 

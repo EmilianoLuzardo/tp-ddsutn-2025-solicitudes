@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,4 +16,9 @@ public class HechoDTO {
     String id;
     String nombreColeccion;
     String titulo;
+    List<String> etiquetas;
+    String categoria;
+    String ubicacion;
+    String fecha;
+    String origen;
 }

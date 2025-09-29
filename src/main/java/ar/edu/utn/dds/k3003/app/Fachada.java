@@ -7,6 +7,7 @@ import ar.edu.utn.dds.k3003.facades.dtos.EstadoSolicitudBorradoEnum;
 
 import ar.edu.utn.dds.k3003.model.HechoDTO;
 import ar.edu.utn.dds.k3003.facades.dtos.SolicitudDTO;
+import ar.edu.utn.dds.k3003.model.HechoVerificadoDTO;
 import ar.edu.utn.dds.k3003.model.Solicitud;
 
 import ar.edu.utn.dds.k3003.repository.JpaSolicitudRepository;
@@ -72,13 +73,15 @@ public class Fachada {
     }
 
 
-    public Map<String, Boolean> verificarSolicitudesPorHechos(List<String> hechosIds) {
-        return hechosIds.stream()
-                .collect(Collectors.toMap(
-                        id -> id,
-                        id -> !solicitudRepository.findByHechoId(id).isEmpty()
-                ));
+    public List<HechoVerificadoDTO> verificarSolicitudesPorHechos(List<HechoDTO> hechos) {
+        return hechos.stream()
+                .map(h -> new HechoVerificadoDTO(
+                        h.getId(),
+                        !solicitudRepository.findByHechoId(h.getId()).isEmpty()
+                ))
+                .toList();
     }
+
 
 
     public List<SolicitudDTO> buscarSolicitudXHecho(String hechoId) {
