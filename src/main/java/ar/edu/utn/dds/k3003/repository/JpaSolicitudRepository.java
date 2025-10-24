@@ -4,8 +4,7 @@ import ar.edu.utn.dds.k3003.model.Solicitud;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public interface JpaSolicitudRepository extends JpaRepository<Solicitud, Long> {
