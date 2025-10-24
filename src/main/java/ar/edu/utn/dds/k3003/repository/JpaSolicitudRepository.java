@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface JpaSolicitudRepository extends JpaRepository<Solicitud, Long> {
-    Optional<Solicitud> findByHechoId(String id);
+    List<Solicitud> findByHechoId(String id);
 
 }
