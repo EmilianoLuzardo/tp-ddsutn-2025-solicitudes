@@ -1,15 +1,20 @@
 package ar.edu.utn.dds.k3003.app;
 
-import ar.edu.utn.dds.k3003.clients.HechosProxy;
+import static com.mongodb.client.model.Filters.eq;
+import org.bson.Document;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
+
+import ar.edu.utn.dds.k3003.clients.HechosProxy;
 import ar.edu.utn.dds.k3003.facades.FachadaFuente;
 import ar.edu.utn.dds.k3003.facades.dtos.EstadoSolicitudBorradoEnum;
-
 import ar.edu.utn.dds.k3003.model.HechoDTO;
 import ar.edu.utn.dds.k3003.facades.dtos.SolicitudDTO;
 import ar.edu.utn.dds.k3003.model.HechoVerificadoDTO;
 import ar.edu.utn.dds.k3003.model.Solicitud;
-
 import ar.edu.utn.dds.k3003.repository.JpaSolicitudRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,6 +64,9 @@ public class Fachada {
         Solicitud nueva = mapearADominio(revisada);
         nueva.setFechaCreacion(LocalDateTime.now());
         Solicitud persistida = solicitudRepository.save(nueva);
+        if (persistida.getEstado() == EstadoSolicitudBorradoEnum.ACEPTADA) {
+            onAcceptance(persistida);
+        }	
         return mapearADTO(persistida);
     }
 
@@ -69,7 +77,24 @@ public class Fachada {
         solicitud.setDescripcion(descripcion);
         solicitud.setFechaUltimaModificacion(LocalDateTime.now());
         solicitud = solicitudRepository.save(solicitud);
+        if (estado == EstadoSolicitudBorradoEnum.ACEPTADA) {
+            onAcceptance(solicitud);
+        }
         return mapearADTO(solicitud);
+    }
+
+    private void onAcceptance(Solicitud sol) {
+        // Borrar de mongodb
+        Map<String, String> env = System.getenv();
+        try (MongoClient mongoClient = MongoClients.create(env.get("MONGODB_URI"))) {
+            MongoDatabase database = mongoClient.getDatabase("busqueda_hechos");
+            MongoCollection<Document> collection = database.getCollection("busqueda_hechos");
+
+            Document query = new Document("hecho_id", new Document("$eq", sol.getHechoId()));
+            collection.deleteOne(query);
+        }
+
+        // TODO: Borrar en fuentes?
     }
 
 
