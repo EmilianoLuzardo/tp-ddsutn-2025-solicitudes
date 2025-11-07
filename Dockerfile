@@ -1,5 +1,5 @@
 # Importing JDK and copying required files
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:21-jre AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src src
