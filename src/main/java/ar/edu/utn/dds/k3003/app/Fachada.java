@@ -108,6 +108,16 @@ public class Fachada {
     }
 
 
+    public List<HechoVerificadoDTO> verificarSolicitudesAceptPorHechos(List<HechoDTO> hechos) {
+        return hechos.stream()
+                .map(h -> new HechoVerificadoDTO(
+                        h.getId(),
+                        !estaActivo(h.getId())
+                ))
+                .toList();
+    }
+
+
 
     public List<SolicitudDTO> buscarSolicitudXHecho(String hechoId) {
         return solicitudRepository.findByHechoId(hechoId).stream()

@@ -64,5 +64,10 @@ public class SolicitudController {
         List<HechoVerificadoDTO> resultado = fachadaSolicitud.verificarSolicitudesPorHechos(hechos);
         return ResponseEntity.ok(resultado);
     }
+    @PostMapping("/verificar-aceptada")
+    public ResponseEntity<List<HechoVerificadoDTO>> verificarSolicitudesAceptadas(@RequestBody List<HechoDTO> hechos) {
+        List<HechoVerificadoDTO> resultado = fachadaSolicitud.verificarSolicitudesAceptPorHechos(hechos);
+        return ResponseEntity.ok(resultado);
+    }
 
 }
